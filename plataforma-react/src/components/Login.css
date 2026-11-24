@@ -1,0 +1,144 @@
+.login-panel {
+    width: 100%;
+    max-width: 440px;
+    margin: 30px auto;
+    padding: 36px;
+    border-top: 5px solid #2850a7;
+    border-radius: 18px;
+    animation: aparecerLogin 0.4s ease-out;
+}
+
+.login-panel .panel__titulo {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.login-panel .panel__titulo h2 {
+    font-size: 1.9rem;
+    color: #12224a;
+    margin-bottom: 10px;
+}
+
+.login-descripcion {
+    color: #5d687d;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.login-icono {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 20px;
+    border-radius: 16px;
+    background: #f5b942;
+    color: #12224a;
+}
+
+.login-form {
+    display: grid;
+    gap: 18px;
+}
+
+.login-form .campo {
+    gap: 8px;
+}
+
+.login-form input {
+    min-height: 48px;
+}
+
+.login-password {
+    position: relative;
+}
+
+.login-password input {
+    padding-right: 85px;
+}
+
+.login-mostrar {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    color: #2850a7;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.login-form .boton-primario {
+    width: 100%;
+    min-height: 48px;
+    margin-top: 8px;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.login-form .boton-primario:hover:not(:disabled) {
+    transform: translateY(-2px);
+}
+
+.login-form .mensaje-error {
+    font-size: 0.85rem;
+}
+
+.login-pie {
+    margin-top: 26px;
+    padding-top: 20px;
+    border-top: 1px solid #dce3ef;
+    text-align: center;
+    color: #657087;
+    font-size: 0.8rem;
+}
+
+@keyframes aparecerLogin {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 600px) {
+    .login-panel {
+        padding: 24px;
+        margin: 10px auto;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .login-panel {
+        animation: none;
+    }
+}
+
+.login-pie a {
+    color: #2850a7;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.login-pie a:hover {
+    text-decoration: underline;
+}
+
+.login-panel .mensaje-exito {
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.login-form input::-ms-reveal {
+    display: none;
+}
+
+.login-form input:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+

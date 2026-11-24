@@ -2,7 +2,8 @@ import {
     createContext,
     useContext,
     useEffect,
-    useState
+    useState,
+    useCallback
 } from 'react';
 
 import {
@@ -74,6 +75,11 @@ export function AuthProvider({ children }) {
         }
     }
 
+    const invalidarSesion = useCallback(() => {
+        setUsuario(null);
+        setError('La sesión ha expirado');
+    }, []);
+
     return (
         <AuthContext.Provider
             value={{
@@ -83,7 +89,8 @@ export function AuthProvider({ children }) {
                 autenticado: Boolean(usuario),
                 login,
                 logout,
-                verificarSesion
+                verificarSesion,
+                invalidarSesion
             }}
         >
             {children}
