@@ -195,6 +195,35 @@ p {
   font-weight: 650;
 }
 
+.mensaje-error {
+  padding: 1rem;
+  border: 1px solid #f1aeb5;
+  border-radius: 0.75rem;
+  color: #842029;
+  background: #f8d7da;
+}
+
+.mensaje-error p {
+  margin: 0 0 0.75rem;
+}
+
+.mensaje-error button {
+  padding: 0.6rem 0.9rem;
+  border: 0;
+  border-radius: 0.5rem;
+  color: white;
+  background: #842029;
+  cursor: pointer;
+}
+
+.boton-primario:disabled,
+.solicitud-formulario input:disabled,
+.solicitud-formulario select:disabled,
+.solicitud-formulario textarea:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
 .seccion-solicitudes {
   margin-top: 40px;
 }

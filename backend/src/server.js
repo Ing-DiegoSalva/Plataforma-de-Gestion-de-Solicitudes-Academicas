@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const conectarDB = require('./database');
@@ -8,14 +10,12 @@ const solicitudesRoutes = require('./routes/solicitudes.routes');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware para interpretar solicitudes JSON
-app.use(express.json());
+const origenesPermitidos = (process.env.FRONTEND_URL ||
+    'http://localhost:5173,http://localhost:4200')
+    .split(',')
+    .map((origen) => origen.trim());
 
-// Permitir peticiones desde Angular
-app.use(cors({
-    origin: 'http://localhost:4200'
-}));
-
+app.use(cors({ origin: origenesPermitidos }));
 app.use(express.json());
 
 

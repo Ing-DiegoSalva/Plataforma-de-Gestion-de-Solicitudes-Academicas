@@ -2,6 +2,33 @@
 Curso: Programación Web II · Código: 30690 · Institución: ISIL
 Evaluación: PA3 — Periodo 202620
 Repositorio: https://github.com/Toriewe/Plataforma-de-Gestion-de-Solicitudes-Academicas
+
+## Actualización — Actividad 1A: consumo de API
+
+La SPA React consulta y registra solicitudes mediante la API Express y MongoDB.
+La integración utiliza `fetch` e incluye:
+
+- consulta `GET /api/solicitudes` al iniciar;
+- registro `POST /api/solicitudes`;
+- estados visibles de carga y envío;
+- manejo de errores HTTP y de conexión, con opción de reintento;
+- validaciones en React y Mongoose;
+- URL de API configurable mediante `VITE_API_URL`;
+- CORS configurable mediante `FRONTEND_URL`.
+
+### Ejecución integrada
+
+1. Iniciar MongoDB en el puerto predeterminado `27017`.
+2. En `backend`, copiar `.env.example` como `.env`, ejecutar
+   `npm install`, `npm run seed` y `npm start`.
+3. En `plataforma-react`, copiar `.env.example` como `.env.local`,
+   ejecutar `npm install` y `npm run dev`.
+4. Abrir `http://localhost:5173`.
+
+La API se ejecuta por defecto en `http://localhost:3000`. Para probar el
+backend se puede ejecutar `npm test`; para verificar React se utiliza
+`npm run build`.
+
 1. Integrantes y participación
 Integrante	Participación documentada anteriormente (PA2)	Participación específica en PA3
 Claudia Beatriz Guillen Baca	Desarrollo frontend Angular, componentes y formularios	Por confirmar con el equipo
@@ -96,7 +123,9 @@ Para validar la compilación de producción:
 npm run build
 Para previsualizar la versión compilada:
 npm run preview
-Importante: esta SPA trabaja con estado en memoria. Las solicitudes nuevas se mantienen al navegar dentro de la aplicación, pero se restablecen a los datos iniciales al recargar la página. No se implementó persistencia permanente ni integración con una API en este corte.
+Importante: desde la Actividad 1A, las solicitudes se almacenan en MongoDB por
+medio de la API Express. Los datos permanecen disponibles después de recargar
+la página.
 8. Pruebas realizadas y evidencias
 Pruebas funcionales realizadas durante el desarrollo local:
 Verificación	Resultado comunicado

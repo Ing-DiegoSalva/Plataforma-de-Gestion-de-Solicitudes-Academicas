@@ -3,39 +3,41 @@ const mongoose = require('mongoose');
 const ESTADOS_VALIDOS = ['Pendiente', 'En revision', 'Aprobada', 'Rechazada'];
 
 const solicitudSchema = new mongoose.Schema({
-    nombre: {
+    estudiante: {
         type: String,
-        required: [true, 'El nombre es obligatorio'],
+        required: [true, 'El estudiante es obligatorio'],
         trim: true,
-        minlength: [3, 'El nombre debe tener al menos 3 caracteres'],
-        maxlength: [100, 'El nombre no puede exceder los 100 caracteres']
+        minlength: [3, 'El estudiante debe tener al menos 3 caracteres'],
+        maxlength: [100, 'El estudiante no puede exceder los 100 caracteres']
     },
-
-    apellido: {
+    curso: {
         type: String,
-        required: [true, 'El apellido es obligatorio'],
+        required: [true, 'El curso es obligatorio'],
         trim: true,
-        minlength: [3, 'El apellido debe tener al menos 3 caracteres'],
-        maxlength: [100, 'El apellido no puede exceder los 100 caracteres']
+        minlength: [3, 'El curso debe tener al menos 3 caracteres'],
+        maxlength: [100, 'El curso no puede exceder los 100 caracteres']
     },
-
-    celular: {
+    descripcion: {
         type: String,
-        required: [true, 'El celular es obligatorio'],
+        required: [true, 'La descripcion es obligatoria'],
         trim: true,
-        match: [/^\d{9}$/, 'El celular debe contener exactamente 9 dígitos']
+        minlength: [5, 'La descripcion debe tener al menos 5 caracteres'],
+        maxlength: [500, 'La descripcion no puede exceder los 500 caracteres']
     },
-
     estado: {
-        type: Boolean,
-        default: true
+        type: String,
+        enum: {
+            values: ESTADOS_VALIDOS,
+            message: 'El estado no es valido'
+        },
+        default: 'Pendiente'
     }
-
 }, {
     timestamps: true,
     collection: 'solicituds'
 });
 
 const Solicitud = mongoose.model('Solicitud', solicitudSchema);
+Solicitud.ESTADOS_VALIDOS = ESTADOS_VALIDOS;
 
 module.exports = Solicitud;

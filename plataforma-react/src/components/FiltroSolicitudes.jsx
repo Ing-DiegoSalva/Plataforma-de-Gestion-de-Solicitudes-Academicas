@@ -1,4 +1,4 @@
-const ESTADOS = ['Todas', 'Pendiente', 'En revisión', 'Aprobada'];
+const ESTADOS = ['Todas', 'Pendiente', 'En revisión', 'Aprobada', 'Rechazada'];
 
 function FiltroSolicitudes({ filtro, onCambiarFiltro, total }) {
   return (

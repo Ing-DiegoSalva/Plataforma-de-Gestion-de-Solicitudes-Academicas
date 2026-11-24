@@ -2,7 +2,15 @@
 import { useSolicitudes } from '../context/SolicitudesContext.jsx';
 
 function ResumenSolicitudes() {
-  const { solicitudes } = useSolicitudes();
+  const { solicitudes, cargando, error } = useSolicitudes();
+
+  if (cargando) {
+    return <p className="cargando" role="status">Cargando resumen…</p>;
+  }
+
+  if (error) {
+    return <p className="mensaje-error" role="alert">{error}</p>;
+  }
 
   const pendientes = solicitudes.filter(
     (solicitud) => solicitud.estado === 'Pendiente'
