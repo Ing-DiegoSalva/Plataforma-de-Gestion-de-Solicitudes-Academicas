@@ -1,18 +1,22 @@
-import { useEffect, useMemo, useState } from 'react';
-import { NavLink, Route, Routes } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useMemo, useState } from "react";
+import { NavLink, Route, Routes, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
-import FiltroSolicitudes from './components/FiltroSolicitudes.jsx';
-import ResumenSolicitudes from './components/ResumenSolicitudes.jsx';
-import SolicitudForm from './components/SolicitudForm.jsx';
-import SolicitudList from './components/SolicitudList.jsx';
-import { useSolicitudes } from './context/SolicitudesContext.jsx';
-import {
-  cambiarFiltro,
-  restablecerFiltro,
-} from './redux/filtroSlice.js';
+import FiltroSolicitudes from "./components/FiltroSolicitudes.jsx";
+import ResumenSolicitudes from "./components/ResumenSolicitudes.jsx";
+import SolicitudForm from "./components/SolicitudForm.jsx";
+import SolicitudList from "./components/SolicitudList.jsx";
+import { useSolicitudes } from "./context/SolicitudesContext.jsx";
+import { cambiarFiltro, restablecerFiltro } from "./redux/filtroSlice.js";
+import Login from "./components/Login.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import { useAuth } from "./context/AuthContext.jsx";
+import Register from './components/Register.jsx';
 
 function App() {
+  const navigate = useNavigate();
+  const { usuario, autenticado, logout } = useAuth();
+  const [errorSesion, setErrorSesion] = useState("");
   const {
     solicitudes,
     cargando,
@@ -21,24 +25,39 @@ function App() {
     cargarSolicitudes,
     agregarSolicitud,
   } = useSolicitudes();
-  const [mensaje, setMensaje] = useState('');
+  const [mensaje, setMensaje] = useState("");
   const filtro = useSelector((state) => state.filtro.estadoSeleccionado);
   const dispatch = useDispatch();
 
   const solicitudesFiltradas = useMemo(() => {
-    if (filtro === 'Todas') return solicitudes;
+    if (filtro === "Todas") return solicitudes;
     return solicitudes.filter((solicitud) => solicitud.estado === filtro);
   }, [filtro, solicitudes]);
 
   async function registrarSolicitud(nuevaSolicitud) {
     await agregarSolicitud(nuevaSolicitud);
     dispatch(restablecerFiltro());
-    setMensaje('La solicitud se registró correctamente.');
+    setMensaje("La solicitud se registró correctamente.");
   }
+
+  async function manejarLogout() {
+    setErrorSesion('');
+
+    try {
+        await logout();
+        setMensaje('');
+        dispatch(restablecerFiltro());
+
+        navigate('/login', { replace: true });
+
+    } catch (error) {
+        setErrorSesion(error.message);
+    }
+}
 
   useEffect(() => {
     if (!mensaje) return undefined;
-    const temporizador = setTimeout(() => setMensaje(''), 3000);
+    const temporizador = setTimeout(() => setMensaje(""), 3000);
     return () => clearTimeout(temporizador);
   }, [mensaje]);
 
@@ -67,37 +86,75 @@ function App() {
             <p>Plataforma de solicitudes</p>
           </div>
           <nav className="menu-navegacion" aria-label="Navegación principal">
-            <NavLink to="/" end>Inicio</NavLink>
-            <NavLink to="/registro">Registro</NavLink>
-            <NavLink to="/solicitudes">Solicitudes</NavLink>
+            {autenticado ? (
+              <>
+                <NavLink to="/" end>
+                  Inicio
+                </NavLink>
+                <NavLink to="/registro">Registro</NavLink>
+                <NavLink to="/solicitudes">Solicitudes</NavLink>
+
+                <div className="usuario-sesion">
+                  <div className="usuario-avatar">
+                    {usuario.nombre.charAt(0).toUpperCase()}
+                  </div>
+
+                  <div className="usuario-info">
+                    <span>{usuario.nombre}</span>
+                    <small>{usuario.rol}</small>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  className="boton-logout"
+                  onClick={manejarLogout}
+                >
+                  Cerrar sesión
+                </button>
+              </>
+            ) : (
+              <NavLink to="/login">Iniciar sesión</NavLink>
+            )}
           </nav>
         </div>
       </header>
 
       <main className="contenedor contenido-principal">
         {mensaje && (
-          <div className="mensaje-exito" role="status">{mensaje}</div>
+          <div className="mensaje-exito" role="status">
+            {mensaje}
+          </div>
+        )}
+        {errorSesion && (
+          <div className="mensaje-error" role="alert">
+            {errorSesion}
+          </div>
         )}
 
         <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route element={<ProtectedRoute />}></Route>
           <Route
             path="/"
-            element={(
+            element={
               <>
                 <section className="presentacion">
                   <p className="etiqueta">Portal del estudiante</p>
                   <h1>Gestiona tus solicitudes académicas</h1>
                   <p>
-                    Registra solicitudes y consulta su estado desde un solo lugar.
+                    Registra solicitudes y consulta su estado desde un solo
+                    lugar.
                   </p>
                 </section>
                 <ResumenSolicitudes />
               </>
-            )}
+            }
           />
           <Route
             path="/registro"
-            element={(
+            element={
               <section className="panel">
                 <div className="panel__titulo">
                   <p className="paso">Nueva solicitud</p>
@@ -108,11 +165,11 @@ function App() {
                   enviando={enviando}
                 />
               </section>
-            )}
+            }
           />
           <Route
             path="/solicitudes"
-            element={(
+            element={
               <section className="seccion-solicitudes">
                 <FiltroSolicitudes
                   filtro={filtro}
@@ -121,7 +178,7 @@ function App() {
                 />
                 {resultadoSolicitudes}
               </section>
-            )}
+            }
           />
           <Route path="*" element={<h2>Página no encontrada</h2>} />
         </Routes>

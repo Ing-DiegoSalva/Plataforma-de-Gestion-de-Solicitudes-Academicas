@@ -28,16 +28,24 @@ async function leerRespuesta(respuesta) {
     const detalles = Array.isArray(contenido.detalles)
       ? `: ${contenido.detalles.join(', ')}`
       : '';
-    throw new Error(
-      `${contenido.mensaje || 'La API no pudo completar la petición'}${detalles}`,
+
+    const error = new Error(
+    `${contenido.mensaje || 'La API no pudo completar la petición'}${detalles}`
     );
+
+    error.status = respuesta.status;
+
+    throw error;
   }
 
   return contenido;
 }
 
 export async function obtenerSolicitudes({ signal } = {}) {
-  const respuesta = await fetch(API_URL, { signal });
+  const respuesta = await fetch(API_URL, {
+    signal,
+    credentials: 'include'
+  });
   const solicitudes = await leerRespuesta(respuesta);
   return solicitudes.map(normalizarSolicitud);
 }
@@ -45,6 +53,7 @@ export async function obtenerSolicitudes({ signal } = {}) {
 export async function crearSolicitud(solicitud) {
   const respuesta = await fetch(API_URL, {
     method: 'POST',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
     },

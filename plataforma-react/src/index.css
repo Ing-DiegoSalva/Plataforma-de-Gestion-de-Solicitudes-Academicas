@@ -535,4 +535,64 @@ p {
   }
 }
 
+/* ===== AUTENTICACIÓN Y SESIÓN ===== */
 
+.usuario-sesion {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-left: 14px;
+    border-left: 1px solid rgb(255 255 255 / 25%);
+}
+
+.usuario-avatar {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #f5b942;
+    color: #12224a;
+    font-weight: 800;
+}
+
+.usuario-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.usuario-info span {
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.usuario-info small {
+    color: #bec9e7;
+    font-size: 0.75rem;
+    text-transform: capitalize;
+}
+
+.boton-logout {
+    padding: 10px 16px;
+    border: 1px solid rgb(255 255 255 / 40%);
+    border-radius: 8px;
+    background: rgb(255 255 255 / 10%);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.boton-logout:hover {
+    background: #b91c1c;
+    border-color: #b91c1c;
+}
+
+@media (max-width: 700px) {
+    .usuario-sesion {
+        border-left: none;
+        padding-left: 0;
+    }
+}
