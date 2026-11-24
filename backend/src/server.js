@@ -2,9 +2,11 @@ require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
+
 const conectarDB = require('./database');
 const solicitudesRoutes = require('./routes/solicitudes.routes');
-
+const authRoutes = require('./routes/auth.routes');
 
 
 const app = express();
@@ -15,9 +17,13 @@ const origenesPermitidos = (process.env.FRONTEND_URL ||
     .split(',')
     .map((origen) => origen.trim());
 
-app.use(cors({ origin: origenesPermitidos }));
-app.use(express.json());
+app.use(cors({ 
+    origin: origenesPermitidos,
+    credentials: true
+}));
 
+app.use(express.json());
+app.use(cookieParser());
 
 // Ruta principal
 app.get('/', (req, res) => {
@@ -26,6 +32,9 @@ app.get('/', (req, res) => {
         estado: 'OK'
     });
 });
+
+// Rutas de autenticación
+app.use('/api/auth', authRoutes);
 
 // Rutas del CRUD de solicitudes
 app.use('/api/solicitudes', solicitudesRoutes);

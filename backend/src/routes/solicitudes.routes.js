@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const solicitudController = require('../controllers/solicitud.controller');
+const { verificarToken } = require('../middleware/auth.middleware');
+
+router.use(verificarToken);
 
 // GET: consultar todas las solicitudes (con soporte de filtros opcionales por query)
 router.get('/', (req, res) => solicitudController.obtenerTodas(req, res));
