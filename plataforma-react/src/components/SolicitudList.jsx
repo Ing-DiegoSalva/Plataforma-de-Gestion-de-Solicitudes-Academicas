@@ -1,6 +1,7 @@
-import SolicitudCard from './SolicitudCard.jsx';
 
-function SolicitudList({ solicitudes }) {
+import SolicitudCard from "./SolicitudCard.jsx";
+
+function SolicitudList({ solicitudes, onEditar, onEliminar, enviando }) {
   if (solicitudes.length === 0) {
     return (
       <div className="estado-vacio">
@@ -12,8 +13,14 @@ function SolicitudList({ solicitudes }) {
 
   return (
     <div className="solicitud-lista">
-      {solicitudes.map((solicitud) => (
-        <SolicitudCard key={solicitud.id} solicitud={solicitud} />
+      {solicitudes.map(solicitud => (
+        <SolicitudCard
+          key={solicitud.id}
+          solicitud={solicitud}
+          onEditar={onEditar}
+          onEliminar={onEliminar}
+          enviando={enviando}
+        />
       ))}
     </div>
   );

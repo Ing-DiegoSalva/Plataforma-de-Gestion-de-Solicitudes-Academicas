@@ -1,11 +1,12 @@
 import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
+  createContext, useCallback, useContext, useEffect, useState
 } from "react";
-import { crearSolicitud, obtenerSolicitudes } from "../api/solicitudesApi.js";
+import {
+  crearSolicitud,
+  obtenerSolicitudes,
+  actualizarSolicitud,
+  eliminarSolicitud
+} from "../api/solicitudesApi.js";
 import { useAuth } from "./AuthContext.jsx";
 
 const SolicitudesContext = createContext(null);
@@ -17,28 +18,25 @@ export function SolicitudesProvider({ children }) {
   const [enviando, setEnviando] = useState(false);
   const [error, setError] = useState("");
 
-  const cargarSolicitudes = useCallback(
-    async ({ signal } = {}) => {
-      setCargando(true);
-      setError("");
+  const manejarError = useCallback((errorPeticion) => {
+    if (errorPeticion.status === 401) invalidarSesion();
+    else setError(errorPeticion.message);
+  }, [invalidarSesion]);
 
-      try {
-        const datos = await obtenerSolicitudes({ signal });
-        setSolicitudes(datos);
-      } catch (errorPeticion) {
-        if (errorPeticion.name !== "AbortError") {
-          if (errorPeticion.status === 401) {
-            invalidarSesion();
-          } else {
-            setError(errorPeticion.message);
-          }
-        }
-      } finally {
-        if (!signal?.aborted) setCargando(false);
+  const cargarSolicitudes = useCallback(async ({ signal } = {}) => {
+    setCargando(true);
+    setError("");
+    try {
+      const datos = await obtenerSolicitudes({ signal });
+      if (!signal?.aborted) setSolicitudes(datos);
+    } catch (err) {
+      if (err.name !== "AbortError" && !signal?.aborted) {
+        manejarError(err);
       }
-    },
-    [invalidarSesion],
-  );
+    } finally {
+      if (!signal?.aborted) setCargando(false);
+    }
+  }, [manejarError]);
 
   useEffect(() => {
     if (!autenticado) {
@@ -47,47 +45,55 @@ export function SolicitudesProvider({ children }) {
       setError("");
       return;
     }
-
     const controller = new AbortController();
-
-    cargarSolicitudes({
-      signal: controller.signal,
-    });
-
+    cargarSolicitudes({ signal: controller.signal });
     return () => controller.abort();
   }, [autenticado, cargarSolicitudes]);
 
-  async function agregarSolicitud(nuevaSolicitud) {
+  async function ejecutarOperacion(operacion) {
     setEnviando(true);
     setError("");
-
     try {
-      const solicitudCreada = await crearSolicitud(nuevaSolicitud);
-      setSolicitudes((anteriores) => [solicitudCreada, ...anteriores]);
-      return solicitudCreada;
-    } catch (errorPeticion) {
-      if (errorPeticion.status === 401) {
-        invalidarSesion();
-      }
-
-      setError(errorPeticion.message);
-      throw errorPeticion;
+      return await operacion();
+    } catch (err) {
+      manejarError(err);
+      throw err;
     } finally {
       setEnviando(false);
     }
   }
 
+  function agregarSolicitud(datos) {
+    return ejecutarOperacion(async () => {
+      const creada = await crearSolicitud(datos);
+      setSolicitudes(prev => [creada, ...prev]);
+      return creada;
+    });
+  }
+
+  function editarSolicitud(id, datos) {
+    return ejecutarOperacion(async () => {
+      const actualizada = await actualizarSolicitud(id, datos);
+      setSolicitudes(prev =>
+        prev.map(s => s.id === id ? actualizada : s)
+      );
+      return actualizada;
+    });
+  }
+
+  function borrarSolicitud(id) {
+    return ejecutarOperacion(async () => {
+      await eliminarSolicitud(id);
+      setSolicitudes(prev => prev.filter(s => s.id !== id));
+    });
+  }
+
   return (
-    <SolicitudesContext.Provider
-      value={{
-        solicitudes,
-        cargando,
-        enviando,
-        error,
-        cargarSolicitudes,
-        agregarSolicitud,
-      }}
-    >
+    <SolicitudesContext.Provider value={{
+      solicitudes, cargando, enviando, error,
+      cargarSolicitudes, agregarSolicitud,
+      editarSolicitud, borrarSolicitud
+    }}>
       {children}
     </SolicitudesContext.Provider>
   );
@@ -95,12 +101,8 @@ export function SolicitudesProvider({ children }) {
 
 export function useSolicitudes() {
   const contexto = useContext(SolicitudesContext);
-
   if (!contexto) {
-    throw new Error(
-      "useSolicitudes debe utilizarse dentro de SolicitudesProvider",
-    );
+    throw new Error("useSolicitudes debe usarse dentro de SolicitudesProvider");
   }
-
   return contexto;
 }

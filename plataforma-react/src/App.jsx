@@ -1,3 +1,4 @@
+
 import { useEffect, useMemo, useState } from "react";
 import { NavLink, Route, Routes, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -29,6 +30,8 @@ function App() {
     error,
     cargarSolicitudes,
     agregarSolicitud,
+    editarSolicitud,
+    borrarSolicitud,
   } = useSolicitudes();
 
   const filtro = useSelector((state) => state.filtro.estadoSeleccionado);
@@ -43,12 +46,28 @@ function App() {
     );
   }, [filtro, solicitudes]);
 
-  // Registrar una solicitud mediante la API
+  // CREATE: Registrar una solicitud mediante la API
   async function registrarSolicitud(nuevaSolicitud) {
     await agregarSolicitud(nuevaSolicitud);
 
     dispatch(restablecerFiltro());
     setMensaje("La solicitud se registró correctamente.");
+  }
+
+  // UPDATE: Editar una solicitud existente
+  async function manejarEdicion(id, datosActualizados) {
+    await editarSolicitud(id, datosActualizados);
+
+    dispatch(restablecerFiltro());
+    setMensaje("La solicitud se actualizó correctamente.");
+  }
+
+  // DELETE: Eliminar una solicitud
+  async function manejarEliminacion(id) {
+    await borrarSolicitud(id);
+
+    dispatch(restablecerFiltro());
+    setMensaje("La solicitud se eliminó correctamente.");
   }
 
   // Cerrar sesión
@@ -98,7 +117,12 @@ function App() {
       </button>
     </div>
   ) : (
-    <SolicitudList solicitudes={solicitudesFiltradas} />
+    <SolicitudList
+      solicitudes={solicitudesFiltradas}
+      onEditar={manejarEdicion}
+      onEliminar={manejarEliminacion}
+      enviando={enviando}
+    />
   );
 
   return (
@@ -170,9 +194,7 @@ function App() {
         )}
 
         <Routes>
-          {/* ================================= */}
-          {/* RUTAS PÚBLICAS                     */}
-          {/* ================================= */}
+          {/* RUTAS PÚBLICAS */}
 
           <Route
             path="/login"
@@ -184,12 +206,9 @@ function App() {
             element={<Register />}
           />
 
-          {/* ================================= */}
-          {/* RUTAS PROTEGIDAS CON SESIÓN JWT   */}
-          {/* ================================= */}
+          {/* RUTAS PROTEGIDAS CON JWT */}
 
           <Route element={<ProtectedRoute />}>
-
             {/* Inicio */}
             <Route
               path="/"
@@ -238,7 +257,7 @@ function App() {
               }
             />
 
-            {/* Listado de solicitudes */}
+            {/* Listado, edición y eliminación */}
             <Route
               path="/solicitudes"
               element={
@@ -255,9 +274,7 @@ function App() {
                 </section>
               }
             />
-
           </Route>
-          {/* FIN DE RUTAS PROTEGIDAS */}
 
           {/* Ruta no encontrada */}
           <Route
