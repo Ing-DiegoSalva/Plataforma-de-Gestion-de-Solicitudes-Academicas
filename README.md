@@ -1,163 +1,191 @@
-**Plataforma de Gestión de Solicitudes Académicas — PA3**
-Curso: Programación Web II · Código: 30690 · Institución: ISIL
-Evaluación: PA3 — Periodo 202620
-Repositorio: https://github.com/Toriewe/Plataforma-de-Gestion-de-Solicitudes-Academicas
+# Plataforma de Gestión de Solicitudes Académicas — PA4
 
-## Actualización — Actividad 1A: consumo de API
+**Curso:** Programación Web II (30690) · **Institución:** ISIL  
+**Evaluación:** PA4 · **Fecha de corte:** 25 de noviembre de 2026  
+**Estado:** avance implementado y publicado parcialmente; algunas verificaciones pendientes  
+**Rama de entrega:** [`pa4-produccion`](https://github.com/Ing-DiegoSalva/Plataforma-de-Gestion-de-Solicitudes-Academicas/tree/pa4-produccion)
 
-La SPA React consulta y registra solicitudes mediante la API Express y MongoDB.
-La integración utiliza `fetch` e incluye:
+> Este documento distingue las funciones implementadas de las pruebas efectivamente realizadas. No se presentan tareas pendientes como finalizadas.
 
-- consulta `GET /api/solicitudes` al iniciar;
-- registro `POST /api/solicitudes`;
-- estados visibles de carga y envío;
-- manejo de errores HTTP y de conexión, con opción de reintento;
-- validaciones en React y Mongoose;
-- URL de API configurable mediante `VITE_API_URL`;
-- CORS configurable mediante `FRONTEND_URL`.
+## 1. Descripción y objetivo
 
-### Ejecución integrada
+La plataforma permite registrar, consultar y gestionar solicitudes académicas de estudiantes. Para la PA4 se amplió la SPA React desarrollada previamente con una API REST, autenticación JWT y persistencia en MongoDB Atlas. Además, se implementó un módulo Next.js para demostrar generación estática (SSG), renderizado del servidor (SSR) y rutas dinámicas.
 
-1. Iniciar MongoDB en el puerto predeterminado `27017`.
-2. En `backend`, copiar `.env.example` como `.env`, ejecutar
-   `npm install`, `npm run seed` y `npm start`.
-3. En `plataforma-react`, copiar `.env.example` como `.env.local`,
-   ejecutar `npm install` y `npm run dev`.
-4. Abrir `http://localhost:5173`.
+## 2. Tecnologías y arquitectura
 
-La API se ejecuta por defecto en `http://localhost:3000`. Para probar el
-backend se puede ejecutar `npm test`; para verificar React se utiliza
-`npm run build`.
+| Módulo | Tecnologías | Responsabilidad |
+| --- | --- | --- |
+| Frontend principal | React, Vite, React Router | Navegación, formularios y listado de solicitudes |
+| Estado en React | Context API, Redux Toolkit | Solicitudes compartidas y filtros |
+| Backend | Node.js, Express | API REST, validación y autenticación |
+| Autenticación | JWT en cookie HttpOnly | Registro, login, consulta de sesión y logout |
+| Base de datos | MongoDB Atlas, Mongoose | Almacenamiento persistente |
+| Frontend complementario | Next.js, TypeScript, App Router | SSG, SSR y rutas dinámicas |
+| Despliegue | Vercel, Render | Frontends y API publicada |
 
-1. Integrantes y participación
-Integrante	Participación documentada anteriormente (PA2)	Participación específica en PA3
-Claudia Beatriz Guillen Baca	Desarrollo frontend Angular, componentes y formularios	Por confirmar con el equipo
-Diego Fernando Salva Puerta	Configuración inicial del backend Node.js/Express y CRUD	Desarrollo e integración de la SPA React, React Router, Context API, Redux y pruebas funcionales, según el trabajo realizado en esta etapa
-Ángel, Modelos Mongoose, persistencia y pruebas	Por confirmar con el equipo
-Isaac Claudio Saldaña	Validaciones, notificaciones y reactivación de registros	Por confirmar con el equipo
-Fabián Marcelo Dávila Herrera	Mejoras de interfaz, avisos y reactivación de registros	Por confirmar con el equipo
+La aplicación React consume rutas `/api/auth` y `/api/solicitudes`. En Vercel se utilizan reglas de reescritura para acceder al backend en Render. En desarrollo local se configuró un proxy equivalente en Vite.
 
-2. Descripción del proyecto
-La Plataforma de Gestión de Solicitudes Académicas permite registrar, consultar y organizar solicitudes de estudiantes desde una aplicación de página única (SPA). Para la PA3 se implementó una nueva interfaz en React, independiente de las etapas previas realizadas con Angular y Node.js/MongoDB.
+## 3. Funcionalidades y grado de validación
 
-3. Objetivo
-Construir una SPA funcional con JSX, componentes reutilizables, Hooks (useState y useEffect), navegación con React Router, estado compartido mediante Context API y un flujo básico con Redux Toolkit; además, comparar ambas estrategias de gestión del estado.
-4. Desarrollo y solución propuesta
-Actividad 1 — SPA en React, JSX, componentes y Hooks
-- Interfaz con secciones de Inicio, Registro y Solicitudes.
-- Formulario controlado de registro de solicitudes y listado con tarjetas.
-- Uso de useState para el estado de la interfaz y useEffect para efectos y mensajes temporales.
-- Carga inicial de tres solicitudes de ejemplo desde src/data/solicitudes.js.
-Archivos de referencia: src/App.jsx, src/components/SolicitudForm.jsx, src/components/SolicitudList.jsx, src/components/SolicitudCard.jsx y src/data/solicitudes.js.
-Actividad 2 — Navegación con React Router
-Se implementó BrowserRouter y las rutas siguientes, que permiten cambiar de sección sin recargar completamente el navegador:
-Ruta	Vista
-/	Inicio y resumen general
-/registro	Formulario de nueva solicitud
-/solicitudes	Consulta y filtrado de solicitudes
-Otras rutas	Mensaje de página no encontrada
+| Funcionalidad | Estado |
+| --- | --- |
+| Navegación SPA con rutas protegidas | Implementada y comprobada |
+| Registro, inicio y cierre de sesión | Comprobados en la aplicación publicada |
+| Persistencia de sesión tras recargar (F5) | Comprobada |
+| Consulta de solicitudes (GET) | Comprobada |
+| Registro de solicitudes (POST) | Comprobado |
+| Filtros con Redux Toolkit | Implementados; probados en etapas anteriores |
+| Actualización de solicitudes (PUT) desde React | Código incorporado; prueba funcional completa pendiente |
+| Eliminación de solicitudes (DELETE) desde React | Código incorporado; prueba funcional completa pendiente |
+| Confirmación antes de eliminar | Incorporada en la interfaz; prueba funcional pendiente |
+| Compilación React con `npm run build` | Correcta antes de los cambios finales; repetir después de estos |
+| Pruebas automatizadas de extremo a extremo | Pendientes |
 
+**Nota:** la visualización de los botones **Editar** y **Eliminar** en localhost no demuestra por sí sola que las operaciones se guarden correctamente en MongoDB. Es necesario realizar las pruebas y actualizar la página para verificar la persistencia.
 
-Archivos de referencia: src/main.jsx y src/App.jsx (Routes, Route, NavLink).
-Actividad 3 — Estado global con Context API
-SolicitudesProvider comparte el arreglo de solicitudes y la función agregarSolicitud. El hook personalizado useSolicitudes() permite acceder a esos datos desde la aplicación y desde el componente ResumenSolicitudes.
+## 4. API REST y autenticación
 
-Prueba funcional: registrar una cuarta solicitud en /registro, visitar /solicitudes y después volver a /: la nueva solicitud aparece en el listado y el contador aumenta de tres a cuatro sin recargar.
+La API de solicitudes está protegida por middleware de autenticación. Se implementaron las siguientes rutas:
 
-Justificación: las solicitudes pertenecen al estado compartido porque múltiples vistas deben consultar sus datos actualizados.
+| Método | Endpoint | Función |
+| --- | --- | --- |
+| GET | `/api/solicitudes` | Listar solicitudes |
+| GET | `/api/solicitudes/:id` | Consultar por identificador |
+| POST | `/api/solicitudes` | Crear solicitud |
+| PUT | `/api/solicitudes/:id` | Actualizar una solicitud |
+| PATCH | `/api/solicitudes/:id` | Actualizar campos específicos |
+| DELETE | `/api/solicitudes/:id` | Eliminar solicitud |
 
-Archivos de referencia: src/context/SolicitudesContext.jsx y src/components/ResumenSolicitudes.jsx.
-Actividad 4 — Redux Toolkit
-Se creó un Slice para administrar el filtro seleccionado de las solicitudes. El flujo implementado es:
-1. El usuario cambia el filtro en la vista de Solicitudes.
-2. dispatch(cambiarFiltro(valor)) envía una acción.
-3. El reducer del Slice actualiza estadoSeleccionado en el Store.
-4. useSelector() obtiene el estado actualizado y la lista se vuelve a filtrar.
-5. Tras registrar una solicitud, dispatch(restablecerFiltro()) restablece el filtro a Todas.
-Justificación: se utiliza Redux para una necesidad acotada, con el fin de demostrar el flujo Store → acción → reducer → actualización de vista sin duplicar el estado de las solicitudes.
+La autenticación se administra mediante rutas bajo `/api/auth`, JWT y cookies HttpOnly. La API recibe principalmente `estudiante`, `curso`, `descripcion` y `estado`; el frontend React adapta el campo `curso` como `tipo` para su presentación.
 
-Archivos de referencia: src/redux/filtroSlice.js, src/redux/store.js, src/main.jsx y src/App.jsx.
-5. Comparación técnica: Context API y Redux
-Criterio	Context API	Redux Toolkit
-Dato administrado en PA3	Solicitudes académicas	Filtro seleccionado
-Punto central	SolicitudesProvider	store.js
-Lectura	useSolicitudes() / useContext()	useSelector()
-Actualización	agregarSolicitud()	dispatch(cambiarFiltro())
-Ventaja en este caso	Comparte solicitudes con pocos elementos adicionales	Acciones y cambios de estado explícitos y trazables
-Costo	Menor configuración inicial	Requiere Store, Slice y Provider
+## 5. Next.js — Actividad 2
 
+El módulo `plataforma-next` demuestra las siguientes estrategias:
 
-Conclusión de la comparación: para una aplicación pequeña, Context API es suficiente para compartir las solicitudes. Redux ofrece una estructura más explícita cuando existen múltiples acciones y reglas de actualización; en esta PA3 se implementó deliberadamente un ejemplo sencillo de Redux para cumplir el objetivo académico.
-6. Estructura relevante del proyecto
-Plataforma-de-Gestion-de-Solicitudes-Academicas/
-├── plataforma-gestion/        # Etapa anterior: Angular
-├── backend/                  # Etapa anterior: Node.js / MongoDB
-├── plataforma-react/         # Aplicación evaluada en PA3
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── FiltroSolicitudes.jsx
-│   │   │   ├── ResumenSolicitudes.jsx
-│   │   │   ├── SolicitudCard.jsx
-│   │   │   ├── SolicitudForm.jsx
-│   │   │   └── SolicitudList.jsx
-│   │   ├── context/SolicitudesContext.jsx
-│   │   ├── data/solicitudes.js
-│   │   ├── redux/filtroSlice.js
-│   │   ├── redux/store.js
-│   │   ├── App.jsx
-│   │   ├── main.jsx
-│   │   └── index.css
-│   ├── package.json
-│   └── vite.config.js
-└── README.md
-7. Cómo ejecutar y revisar la PA3
-Requisitos: Node.js y npm instalados.
+- **SSG — `/tramites`:** catálogo informativo de trámites académicos, generado de manera estática.
+- **SSR — `/estado-servicio`:** consulta del estado del backend con renderizado dinámico.
+- **Rutas dinámicas — `/solicitudes/[id]`:** muestra datos demostrativos para los identificadores 1, 2 y 3; el identificador 999 devuelve una página 404.
 
-Desde la carpeta raíz del repositorio:
+Se verificaron las rutas, su comportamiento y la compilación de Next.js durante el desarrollo. **Las solicitudes de esta demostración son datos de ejemplo, no registros privados de MongoDB.**
+
+Detalles técnicos y evidencias: [README de Next.js](plataforma-next/README.md).
+
+## 6. Despliegues y enlaces
+
+- **API Express — Render:** https://pa4-solicitudes-api.onrender.com/ — comprobada con respuesta `estado: OK`.
+- **Frontend React — Vercel:** https://pa4-solicitudes-react.vercel.app/ — comprobado para registro, autenticación, consulta y creación de solicitudes.
+- **Frontend Next.js:** desplegado en Vercel y probado durante el desarrollo; consultar su URL vigente en la configuración del proyecto.
+
+**Importante:** la rama `pa4-produccion` contiene los últimos cambios de edición y eliminación, pero **no se confirmó que esa versión se haya desplegado en Vercel**. El sitio público puede mostrar una versión anterior.
+
+## 7. Instrucciones de ejecución
+
+### 7.1 React local
+
+Desde la raíz del repositorio:
+
+```bash
 cd plataforma-react
 npm install
 npm run dev
-Abrir en el navegador la dirección indicada por Vite, habitualmente http://localhost:5173/.
+```
 
-Para validar la compilación de producción:
+Para utilizar el backend publicado desde localhost, crear `plataforma-react/.env.local` (no incluir este archivo en Git) con:
+
+```dotenv
+VITE_AUTH_URL=/api/auth
+VITE_API_URL=/api/solicitudes
+```
+
+Configurar `plataforma-react/vite.config.js` con un proxy de desarrollo:
+
+```javascript
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://pa4-solicitudes-api.onrender.com',
+        changeOrigin: true,
+        secure: true,
+      },
+    },
+  },
+});
+```
+
+Reiniciar el servidor de Vite después de actualizar la configuración.
+
+**Advertencia:** al usar la API de Render, las operaciones pueden modificar datos de MongoDB Atlas. Utilizar únicamente registros de prueba para validar edición y eliminación. No subir credenciales, tokens ni archivos de entorno con secretos.
+
+Para verificar la compilación:
+
+```bash
 npm run build
-Para previsualizar la versión compilada:
-npm run preview
-Importante: desde la Actividad 1A, las solicitudes se almacenan en MongoDB por
-medio de la API Express. Los datos permanecen disponibles después de recargar
-la página.
-8. Pruebas realizadas y evidencias
-Pruebas funcionales realizadas durante el desarrollo local:
-Verificación	Resultado comunicado
-Navegar entre Inicio, Registro y Solicitudes sin recargar	Correcto
-Registrar una solicitud y verla en el listado	Correcto
-Actualizar el resumen mediante Context API	Correcto
-Filtrar por Todas y Pendiente mediante Redux	Correcto
-Restablecer el filtro tras registrar	Correcto
-Conservar el registro al cambiar de vista sin recargar	Correcto
-Ejecutar npm run build	Correcto: Vite transformó 40 módulos y compiló sin errores
+```
 
+### 7.2 Next.js
 
-Evidencias visuales: incorporar en la carpeta evidencias/pa3/ capturas reales de la pantalla Inicio, formulario Registro, listado con filtros, resumen actualizado, consola con npm run build y, si es útil, los archivos de Context API y Redux. Reemplazar esta indicación por enlaces a las capturas una vez subidas al repositorio.
-Las pruebas anteriores son verificaciones funcionales manuales, no una suite automatizada de tests.
+```bash
+cd plataforma-next
+npm install
+npm run dev
+npm run build
+```
 
-9. Procedimiento seguido y decisiones técnicas
-1. Se verificó el funcionamiento de la base React existente y se instalaron las dependencias necesarias.
-2. Se configuró React Router con tres vistas principales.
-3. Se creó y conectó SolicitudesProvider para compartir el estado de las solicitudes.
-4. Se implementó ResumenSolicitudes como consumidor directo del Context.
-5. Se configuraron Redux Toolkit, filtroSlice.js, store.js y el Provider de React Redux.
-6. Se conectó el filtro mediante useSelector y useDispatch.
-7. Se realizaron pruebas funcionales de registro, navegación y filtrado, y se ejecutó la compilación de producción.
-8. Se mejoraron los estilos de navegación, resumen y estados de solicitudes.
-Se mantuvieron los módulos Angular y backend anteriores para conservar la evolución del proyecto. Para PA3 se prefirieron datos locales, según el alcance de la evaluación, sin adelantar Axios ni JWT en React.
-10. Video de exposición
-Video público de YouTube: [PEGAR AQUÍ EL ENLACE]
-Sustituir el marcador por el enlace del video público de PA3 con participación de todos los integrantes antes de la entrega.
+La vista SSR requiere una URL de API accesible desde el entorno de ejecución.
 
-11. Conclusiones
-- React, JSX y los Hooks permiten desarrollar una interfaz dinámica y basada en componentes reutilizables.
-- React Router organiza la navegación de la SPA sin recargar la página completa.
-- Context API facilitó compartir las solicitudes entre el registro, el listado y el resumen.
-- Redux Toolkit permitió implementar y explicar un flujo básico de acciones, reducer y Store para el filtro.
-- La separación de responsabilidades facilita mantener el proyecto y justificar las decisiones técnicas de la evaluación.
+### 7.3 Backend
+
+```bash
+cd backend
+npm install
+npm start
+```
+
+Configurar previamente las variables de entorno necesarias siguiendo `backend/.env.example`, sin publicar datos privados.
+
+## 8. Estructura principal
+
+```text
+backend/             API REST, middleware JWT y MongoDB
+plataforma-react/    SPA React, rutas, Context API, Redux y CRUD
+plataforma-next/     Next.js con SSG, SSR y rutas dinámicas
+plataforma-gestion/  Desarrollo Angular de etapas anteriores
+README.md            Documentación y estado global de la PA4
+```
+
+## 9. Evidencias y pruebas
+
+### Comprobaciones realizadas
+
+- Conectividad del backend de Render y respuesta de estado `OK`.
+- Registro, login, recuperación de sesión, cierre de sesión y consulta/creación de solicitudes desde el frontend publicado.
+- Rutas SSG, SSR y dinámicas de Next.js, incluida página 404 para una solicitud demostrativa inexistente.
+- Compilación de React exitosa antes de las últimas modificaciones.
+- Visualización de las acciones **Editar** y **Eliminar** en React local después de configurar el proxy de Vite.
+- Publicación de los cambios en GitHub, rama `pa4-produccion`.
+
+### Verificaciones pendientes
+
+1. Probar edición y eliminación con registros de prueba y comprobar persistencia después de F5.
+2. Ejecutar una compilación final con todos los cambios realizados.
+3. Confirmar los valores permitidos para los estados de solicitud y las reglas de autorización.
+4. Publicar o verificar el despliegue de la versión final React en Vercel, si la entrega lo exige.
+5. Completar capturas, pruebas adicionales y materiales de exposición según la rúbrica del docente.
+
+Las comprobaciones anteriores son principalmente pruebas manuales; no equivalen a una suite automatizada de extremo a extremo.
+
+## 10. Repositorios y entrega
+
+- **Repositorio original del equipo:** https://github.com/Toriewe/Plataforma-de-Gestion-de-Solicitudes-Academicas
+- **Fork y rama de entrega:** https://github.com/Ing-DiegoSalva/Plataforma-de-Gestion-de-Solicitudes-Academicas/tree/pa4-produccion
+
+La rama indicada contiene los avances de la PA4 para su revisión. Las responsabilidades completas de cada integrante deben corroborarse con el equipo; este documento no atribuye actividades que no se hayan verificado.
+
+## 11. Conclusión
+
+La PA4 integra una SPA React, una API REST con autenticación y persistencia, y un proyecto complementario Next.js que demuestra SSG, SSR y rutas dinámicas. Las funciones de edición y eliminación fueron incorporadas al código, pero sus pruebas funcionales completas y la publicación de la última versión del frontend React quedan pendientes. Este README refleja el alcance alcanzado y los aspectos aún no cerrados.
