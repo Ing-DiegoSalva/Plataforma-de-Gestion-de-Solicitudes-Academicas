@@ -1,6 +1,6 @@
+
 import Link from "next/link";
 
-// Fuerza el renderizado dinámico en el servidor.
 export const dynamic = "force-dynamic";
 
 interface EstadoAPI {
@@ -9,17 +9,42 @@ interface EstadoAPI {
 }
 
 async function consultarEstado(): Promise<EstadoAPI | null> {
+  const apiUrl = process.env.API_BASE_URL;
+
+  if (!apiUrl) {
+    console.warn("API_BASE_URL no está configurada");
+    return null;
+  }
+
   try {
-    const respuesta = await fetch("http://localhost:3000/", {
+    const respuesta = await fetch(apiUrl, {
       cache: "no-store",
     });
 
     if (!respuesta.ok) {
+      console.error("Error HTTP:", respuesta.status);
       return null;
     }
 
-    return await respuesta.json();
-  } catch {
+    const datos: unknown = await respuesta.json();
+
+    if (
+      typeof datos !== "object" ||
+      datos === null ||
+      !("mensaje" in datos) ||
+      !("estado" in datos) ||
+      typeof datos.mensaje !== "string" ||
+      typeof datos.estado !== "string"
+    ) {
+      return null;
+    }
+
+    return {
+      mensaje: datos.mensaje,
+      estado: datos.estado,
+    };
+  } catch (error) {
+    console.error("Error al consultar la API:", error);
     return null;
   }
 }
@@ -33,13 +58,13 @@ export default async function EstadoServicioPage() {
 
   return (
     <main style={{ maxWidth: 960, margin: "40px auto", padding: 24 }}>
-      <Link href="/tramites">← Volver a trámites</Link>
+      <Link href="/">← Volver al inicio</Link>
 
       <h1>Estado del servicio académico</h1>
 
       <p>
-        Esta página utiliza Server-Side Rendering (SSR)
-        para consultar el estado de nuestra API Node.js.
+        Consulta del estado del backend mediante
+        Server-Side Rendering (SSR).
       </p>
 
       <section

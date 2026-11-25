@@ -1,69 +1,115 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+
+import Link from "next/link";
+
+const secciones = [
+  {
+    titulo: "Catálogo de trámites",
+    descripcion:
+      "Consulta los trámites académicos disponibles mediante generación estática (SSG).",
+    ruta: "/tramites",
+    tecnologia: "SSG",
+  },
+  {
+    titulo: "Estado del servicio",
+    descripcion:
+      "Consulta el estado de nuestra API Node.js mediante renderizado en el servidor.",
+    ruta: "/estado-servicio",
+    tecnologia: "SSR",
+  },
+  {
+    titulo: "Consulta de solicitudes",
+    descripcion:
+      "Visualiza solicitudes académicas de demostración utilizando rutas dinámicas.",
+    ruta: "/solicitudes/1",
+    tecnologia: "Ruta dinámica",
+  },
+];
 
 export default function Home() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>
-            To get started, edit the{" "}
-            <code className={styles.code}>page.tsx</code> file.
-          </h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
+    <main
+      style={{
+        maxWidth: 1100,
+        margin: "0 auto",
+        padding: "60px 24px",
+      }}
+    >
+      <header style={{ marginBottom: 48 }}>
+        <p style={{ color: "#60a5fa", fontWeight: 700 }}>
+          ISIL — PROGRAMACIÓN WEB II
+        </p>
+
+        <h1 style={{ fontSize: "2.5rem", marginTop: 12 }}>
+          Plataforma de Gestión de Solicitudes Académicas
+        </h1>
+
+        <p style={{ marginTop: 16, opacity: 0.8 }}>
+          PA4 — Implementación de Next.js con SSR, SSG
+          y rutas dinámicas.
+        </p>
+      </header>
+
+      <section>
+        <h2>Explora las funcionalidades</h2>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(260px, 1fr))",
+            gap: 20,
+            marginTop: 24,
+          }}
+        >
+          {secciones.map((seccion) => (
+            <article
+              key={seccion.ruta}
+              style={{
+                border: "1px solid #64748b",
+                borderRadius: 14,
+                padding: 24,
+              }}
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+              <p
+                style={{
+                  color: "#60a5fa",
+                  fontWeight: 700,
+                  marginBottom: 12,
+                }}
+              >
+                {seccion.tecnologia}
+              </p>
+
+              <h3>{seccion.titulo}</h3>
+
+              <p style={{ margin: "16px 0" }}>
+                {seccion.descripcion}
+              </p>
+
+              <Link
+                href={seccion.ruta}
+                style={{
+                  color: "#60a5fa",
+                  fontWeight: 700,
+                }}
+              >
+                Explorar sección →
+              </Link>
+            </article>
+          ))}
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </section>
+
+      <footer
+        style={{
+          marginTop: 64,
+          paddingTop: 24,
+          borderTop: "1px solid #64748b",
+        }}
+      >
+        <p>PA4 — Actividad 2 | Next.js</p>
+        <p>Responsable: Diego Fernando Salva Puerta</p>
+      </footer>
+    </main>
   );
 }
